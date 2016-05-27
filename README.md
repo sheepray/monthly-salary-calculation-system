@@ -8,6 +8,7 @@ bug report to: rui.yang at aalto.fi
 ### Mandatory:
 - change the "dataSrcPath" to the path that contains the file with salary;
 - change and "dataSrcName" the name of the file with salary.
+
 ### Optional:
 - read through the other settings, change the value if needed.
 
