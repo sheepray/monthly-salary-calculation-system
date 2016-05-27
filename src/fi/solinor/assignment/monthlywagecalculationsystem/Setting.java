@@ -12,7 +12,7 @@ public class Setting {
 	
 	/* evening work compensation */
 	public final static boolean enableEvnWorkComp = true;	// enable calculating evening work compensation wage.
-	public final static double	extraWage = 1.15;	// extra wage per hour.
+	public final static double	extraWage = 1.15;	// extra wage per hour over night.
 	public final static int startHour = 18;	// starting hour.
 	public final static int startMinute = 00;	// starting minute.
 	public final static int endHour = 06;		// ending hour.

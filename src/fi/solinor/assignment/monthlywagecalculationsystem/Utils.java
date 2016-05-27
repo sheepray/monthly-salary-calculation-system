@@ -1,5 +1,13 @@
 package fi.solinor.assignment.monthlywagecalculationsystem;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * utility functions wrapper.
  * @author rui yang
@@ -85,7 +93,7 @@ public class Utils {
 						printlnErrorWithMark("measure milestone not set or the value is incorrect, abort!");
 						return false;
 					}
-				} // end of for loop.
+				}// end of for loop.
 			}// end of checking Setting.enableOvertimeComp.
 			
 		}// end of try.
@@ -98,6 +106,106 @@ public class Utils {
 		println("----------------------------------------------------");
 		return true;
 	}// end of verifySetting().
+	
+	/* calculate salary based on normal working hours. If time exceed the 8 hours, extra wage will be added. */
+	public static double calculateNormalHourlySalary(double workingHour){
+		if(workingHour < 0 && workingHour > 24) {
+			printlnError("incorrect working hour.");
+			return 0;
+		}
+		
+		double salary = 0;
+		
+		if(Setting.enableHourlyWage){
+			salary = Setting.hourlyWage * workingHour;
+			
+			if(Setting.enableOvertimeComp){
+				/* add extra working hour wage */
+				workingHour -= 8;
+				double calculatedHour = 0;
+				int i = 0;
+				while(calculatedHour < workingHour && i < Setting.overtimeWageMilestone.length){
+					salary += (Math.min(workingHour, Setting.overtimeWageMilestone[i][0]) - calculatedHour) * 
+							Setting.overtimeWageMilestone[i][1] * // percentage.
+							Setting.hourlyWage;	// hourly wage.
+					
+					calculatedHour = Setting.overtimeWageMilestone[i][0];
+					
+					i++;
+				}
+			}
+		}
+		
+		return salary;
+	}// end of calculateNormalHourlySalary().
+	
+	/**
+	 * process the file which contains employees' salary data.
+	 * @param employees parsing result.
+	 * @return String month. 
+	 * @throws IOException 
+	 */
+	public static String processSalaryData(Map<String, EmployeeInfo> employees) throws IOException{
+		/* read file */
+		FileInputStream fstream;
+		try {
+			fstream = new FileInputStream(Setting.dataSrcPath + Setting.dataSrcName);
+		} catch (FileNotFoundException e) {
+			printlnError("file not found.");
+			return null;
+		}
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+		String strMonth = null;
+		boolean monthSet = false;
+		/* Read File Line By Line */
+		String strLine = br.readLine(); // skip first line.
+		while ((strLine = br.readLine()) != null){
+			println("[processing] " + strLine);
+			
+			String[] strTokens = strLine.split(",");
+			
+			if(!monthSet){
+				strMonth = deleteDate(strTokens[2]);
+				monthSet = true;
+			}
+			
+			String name = strTokens[0];
+			String id = strTokens[1];
+			EmployeeInfo employee = employees.get(id);
+			if(employee == null){
+				//not found then create one.
+				employee = new EmployeeInfo(name);
+				employees.put(id, employee);
+			}
+			
+			String strBeginTime = strTokens[3];
+			String strEndTime = strTokens[4];
+			Time beginTime = parseStringToTime(strBeginTime);
+			Time endTime = parseStringToTime(strEndTime);
+			
+			employee.processWorkingHour(beginTime, endTime);
+		}
+
+		//Close the input stream
+		br.close();
+		
+		return strMonth;
+	}// end of processSalaryData(...).
+	
+	/* parse the time presented in string to Time instance */
+	public static Time parseStringToTime(String strTime){
+		String[] timeTokens = strTime.split(":");
+		return new Time(Integer.parseInt(timeTokens[0]), 
+						Integer.parseInt(timeTokens[1]));
+	}
+	
+	/* remove date from full syntax of date. For instance, 12.03.2016 to 03.2016 */
+	public static String deleteDate(String date){
+		int index = date.indexOf(".");
+		return index == -1? null : date.substring(index + 1);
+	}
 	
 	/* is hour in 24 format? */
 	public static boolean is24Hour(int hour){
