@@ -26,62 +26,69 @@ public class Utils {
 				return false;
 			}
 			
-			/* verify hourly wage */
-			if(withinRangeExcludingLargeValue(Setting.hourlyWage, 0, 100000)){
-				printlnWithMark("hourly wage is:" + Setting.hourlyWage);
-			}else{
-				printlnErrorWithMark("hourly wage not set or too big, abort!");
-				return false;
-			}
-			
-			/* verify extraWage */
-			if(withinRangeExcludingLargeValue(Setting.extraWage, 0, 100000)){
-				printlnWithMark("extra wage for evening work is:" + Setting.extraWage);
-			}else{
-				printlnErrorWithMark("extra wage for evening work not set or too big, abort!");
-				return false;
-			}
-			
-			/* verify startHour and startMinute */
-			if( is24Hour(Setting.startHour) && isMinute(Setting.startMinute)){
-				printlnWithMark("evening work start at [" + Setting.startHour + ":" + Setting.startMinute + "]");
-			}else{
-				printlnErrorWithMark("startHour or/and startMinute not set or with incorrect value, abort!");
-				return false;
-			}
-			
-			/* verify endHour and endMinute */
-			if( is24Hour(Setting.endHour) && isMinute(Setting.endMinute)){
-				printlnWithMark("evening work end at [" + Setting.endHour + ":" + Setting.endMinute + "]");
-			}else{
-				printlnErrorWithMark("endHour or/and endMinute not set or with incorrect value, abort!");
-				return false;
-			}
-			
-			/* verify overtimeWageMilestone */
-			double preMileStone = 0;
-			for(int i = 0; i < Setting.overtimeWageMilestone.length; i++){
-				if(
-					withinRangeExcludingLargeValue( Setting.overtimeWageMilestone[i][0],
-								0,
-								17)
-				){
-					if(preMileStone >= Setting.overtimeWageMilestone[i][0]){
-						printlnErrorWithMark("incorrect order of overtime measurements, abort");
-						return false;
-					}
-					preMileStone = Setting.overtimeWageMilestone[i][0];
-					
-					printlnWithMark( i + "th measure milestone is:" + 
-									 Setting.overtimeWageMilestone[i][0] + 
-									 " = hourly wage + " + 
-									 Setting.overtimeWageMilestone[i][1]);
+			if(Setting.enableHourlyWage){
+				/* verify hourly wage */
+				if(withinRangeExcludingLargeValue(Setting.hourlyWage, 0, 100000)){
+					printlnWithMark("hourly wage is:" + Setting.hourlyWage);
 				}else{
-					printlnErrorWithMark("measure milestone not set or the value is incorrect, abort!");
+					printlnErrorWithMark("hourly wage not set or too big, abort!");
 					return false;
 				}
 			}
-		}
+			
+			if(Setting.enableEvnWorkComp){
+				/* verify extraWage */
+				if(withinRangeExcludingLargeValue(Setting.extraWage, 0, 100000)){
+					printlnWithMark("extra wage for evening work is:" + Setting.extraWage);
+				}else{
+					printlnErrorWithMark("extra wage for evening work not set or too big, abort!");
+					return false;
+				}
+				
+				/* verify startHour and startMinute */
+				if( is24Hour(Setting.startHour) && isMinute(Setting.startMinute)){
+					printlnWithMark("evening work start at [" + Setting.startHour + ":" + Setting.startMinute + "]");
+				}else{
+					printlnErrorWithMark("startHour or/and startMinute not set or with incorrect value, abort!");
+					return false;
+				}
+				
+				/* verify endHour and endMinute */
+				if( is24Hour(Setting.endHour) && isMinute(Setting.endMinute)){
+					printlnWithMark("evening work end at [" + Setting.endHour + ":" + Setting.endMinute + "]");
+				}else{
+					printlnErrorWithMark("endHour or/and endMinute not set or with incorrect value, abort!");
+					return false;
+				}
+			}
+			
+			if(Setting.enableOvertimeComp){
+				/* verify overtimeWageMilestone */
+				double preMileStone = 0;
+				for(int i = 0; i < Setting.overtimeWageMilestone.length; i++){
+					if(
+						withinRangeExcludingLargeValue( Setting.overtimeWageMilestone[i][0],
+									0,
+									17)
+					){
+						if(preMileStone >= Setting.overtimeWageMilestone[i][0]){
+							printlnErrorWithMark("incorrect order of overtime measurements, abort");
+							return false;
+						}
+						preMileStone = Setting.overtimeWageMilestone[i][0];
+						
+						printlnWithMark( i + "th measure milestone is:" + 
+										 Setting.overtimeWageMilestone[i][0] + 
+										 " = hourly wage + " + 
+										 Setting.overtimeWageMilestone[i][1]);
+					}else{
+						printlnErrorWithMark("measure milestone not set or the value is incorrect, abort!");
+						return false;
+					}
+				} // end of for loop.
+			}// end of checking Setting.enableOvertimeComp.
+			
+		}// end of try.
 		catch(RuntimeException e){
 			printlnErrorWithMark("[fatal error] required setting(s) not provided.");
 			return false;
@@ -90,7 +97,7 @@ public class Utils {
 		printlnWithMark("Processing setting done.");
 		println("----------------------------------------------------");
 		return true;
-	}
+	}// end of verifySetting().
 	
 	/* is hour in 24 format? */
 	public static boolean is24Hour(int hour){
