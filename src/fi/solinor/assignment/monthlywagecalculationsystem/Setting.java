@@ -10,7 +10,7 @@ public class Setting {
 	public final static boolean enableHourlyWage = true;	// enable calculating hourly wage.
 	public final static double	hourlyWage = 3.75;	// hourly wage.
 	
-	/* evening work Compensation */
+	/* evening work compensation */
 	public final static boolean enableEvnWorkComp = true;	// enable calculating evening work compensation wage.
 	public final static double	extraWage = 1.15;	// extra wage per hour.
 	public final static int startHour = 18;	// starting hour.
