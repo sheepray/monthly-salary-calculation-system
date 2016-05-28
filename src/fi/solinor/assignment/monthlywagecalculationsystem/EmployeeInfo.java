@@ -3,7 +3,7 @@ package fi.solinor.assignment.monthlywagecalculationsystem;
 /* one instance of this class stands for one employee */
 public class EmployeeInfo {
 	String mName;
-	double mTotalWorkingHour = 0;
+	//double mTotalWorkingHour = 0;
 	double mSalary = 0;
 	boolean mTotalSalaryCaculated = false;
 	
@@ -14,7 +14,6 @@ public class EmployeeInfo {
 	/* get salary by calculating salary if this function is called the first time. */
 	public double getFinalSalary(){
 		if (!this.mTotalSalaryCaculated){ // calculate only once when done processing all working hours.
-			mSalary += Utils.calculateNormalHourlySalary(this.mTotalWorkingHour); // add regular wage + overtime compensation to evening work compensation.
 			mSalary = Utils.removeValueAfterDot(mSalary, 2); // keep the precision to a cent.
 			this.mTotalSalaryCaculated = true;
 		}
@@ -29,7 +28,10 @@ public class EmployeeInfo {
 		
 		if(beginTimeInHours > endTimeInHours) endTimeInHours += 24; // over night.
 		
-		this.mTotalWorkingHour += endTimeInHours - beginTimeInHours;
+		//this.mTotalWorkingHour += endTimeInHours - beginTimeInHours;
+		double todayWorkingHour = endTimeInHours - beginTimeInHours;
+		
+		mSalary += Utils.calculateNormalHourlySalary(todayWorkingHour); // add regular wage + overtime compensation to evening work compensation.
 		
 		if(Setting.enableEvnWorkComp){
 			/* add money to salary if it is in the evening. */
