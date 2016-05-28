@@ -20,10 +20,7 @@ bug report to: rui.yang at aalto.fi
 4. click run, the output will be showed in the console.
 
 ### input data syntax example
-
-'''
 Person Name,Person ID,Date,Start,End
 Scott Scala,2,2.3.2014,6:00,14:00
-'''
 
 TODO: integrate into Java Jersey Framework.
