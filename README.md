@@ -25,4 +25,6 @@ bug report to: rui.yang at aalto.fi
 - Janet Java,1,3.3.2014,9:30,17:00
 - Scott Scala,2,3.3.2014,8:15,16:00
 
-TODO: integrate into Java Jersey Framework.
+TODO:
+- Move setting to a file instead of hard coded in the Setting.java
+- Provide Test Automation script 
