@@ -37,7 +37,9 @@ public class EmployeeInfo {
 			double lowFlag = Math.max(beginTimeInHours, ParsedSetting.getBeginTime().toHours());
 			double highFlag = Math.min(endTimeInHours, ParsedSetting.getEndTime().toHours());
 			
-			this.mSalary += (highFlag - lowFlag) * Setting.extraWage; // duration of over night working.
+			if(highFlag > lowFlag){
+				this.mSalary += (highFlag - lowFlag) * Setting.extraWage; // duration of over night working.
+			}
 		}
 		
 	}
