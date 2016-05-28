@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,7 +12,10 @@ import java.util.Map;
  * @author rui yang
  */
 public class Utils {
-	/* verify the settings */
+	/**
+	 * verify the settings.
+	 * @return true if setting is in correct format. Otherwise false.
+	 */
 	public static boolean verifySetting(){
 		println("----------------------------------------------------");
 		println("start processing setting file");
@@ -107,7 +109,11 @@ public class Utils {
 		return true;
 	}// end of verifySetting().
 	
-	/* calculate salary based on normal working hours. If time exceed the 8 hours, extra wage will be added. */
+	/**
+	 * calculate salary based on normal working hours. If time exceed the 8 hours, extra wage will be added.
+	 * @param workingHour
+	 * @return wage based on the workingHour.
+	 */
 	public static double calculateNormalHourlySalary(double workingHour){
 		if(workingHour < 0 && workingHour > 24) {
 			printlnError("incorrect working hour.");
@@ -151,7 +157,7 @@ public class Utils {
 		try {
 			fstream = new FileInputStream(Setting.dataSrcPath + Setting.dataSrcName);
 		} catch (FileNotFoundException e) {
-			printlnError("file not found.");
+			printlnError("file not found. Please check your setting of dataSrcPath and dataSrcName. Make sure there is a / at the end of dataSrcPath.");
 			return null;
 		}
 		
@@ -166,6 +172,10 @@ public class Utils {
 			
 			String[] strTokens = strLine.split(",");
 			
+			/* to check input is valid or not */
+			assert strTokens.length == 5;
+			
+			/* get the month only once */
 			if(!monthSet){
 				strMonth = deleteDate(strTokens[2]);
 				monthSet = true;
@@ -173,6 +183,8 @@ public class Utils {
 			
 			String name = strTokens[0];
 			String id = strTokens[1];
+			
+			/* find employee with id */
 			EmployeeInfo employee = employees.get(id);
 			if(employee == null){
 				//not found then create one.
@@ -194,9 +206,26 @@ public class Utils {
 		return strMonth;
 	}// end of processSalaryData(...).
 	
+	/**
+	 * this function is to make a precision of a double value.
+	 * @param target target value.
+	 * @param position position after dot.
+	 * @return a double value with a precision of the target value.
+	 */
+	public static double removeValueAfterDot(double target, int position){
+		if(position <= 0) return target;
+		double var = target * Math.pow(10, position);
+		if(Double.MAX_VALUE < var) return target; // value is too big to convert.
+		
+		return ( (long)var ) / Math.pow(10, position);
+	}
+	
 	/* parse the time presented in string to Time instance */
 	public static Time parseStringToTime(String strTime){
 		String[] timeTokens = strTime.split(":");
+		
+		assert timeTokens.length == 2;
+		
 		return new Time(Integer.parseInt(timeTokens[0]), 
 						Integer.parseInt(timeTokens[1]));
 	}

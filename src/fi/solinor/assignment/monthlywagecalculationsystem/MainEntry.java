@@ -2,7 +2,6 @@ package fi.solinor.assignment.monthlywagecalculationsystem;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**

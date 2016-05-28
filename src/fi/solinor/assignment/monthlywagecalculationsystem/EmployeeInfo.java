@@ -3,20 +3,19 @@ package fi.solinor.assignment.monthlywagecalculationsystem;
 /* one instance of this class stands for one employee */
 public class EmployeeInfo {
 	String mName;
-	double mTotalWorkingHour;
-	double mSalary;
+	double mTotalWorkingHour = 0;
+	double mSalary = 0;
 	boolean mTotalSalaryCaculated = false;
 	
 	public EmployeeInfo(String name){
 		this.mName = name;
-		mTotalWorkingHour = 0;
-		mSalary = 0;
 	}
 	
 	/* get salary by calculating salary if this function is called the first time. */
 	public double getFinalSalary(){
-		if (!this.mTotalSalaryCaculated){
-			mSalary += Utils.calculateNormalHourlySalary(this.mTotalWorkingHour);
+		if (!this.mTotalSalaryCaculated){ // calculate only once when done processing all working hours.
+			mSalary += Utils.calculateNormalHourlySalary(this.mTotalWorkingHour); // add regular wage + overtime compensation to evening work compensation.
+			mSalary = Utils.removeValueAfterDot(mSalary, 2); // keep the precision to a cent.
 			this.mTotalSalaryCaculated = true;
 		}
 		
@@ -33,7 +32,8 @@ public class EmployeeInfo {
 		this.mTotalWorkingHour += endTimeInHours - beginTimeInHours;
 		
 		if(Setting.enableEvnWorkComp){
-			//add money to salary if it is in the evening.
+			/* add money to salary if it is in the evening. */
+			/// try to find the over lap between the working hour and standard evening time duration.
 			double lowFlag = Math.max(beginTimeInHours, ParsedSetting.getBeginTime().toHours());
 			double highFlag = Math.min(endTimeInHours, ParsedSetting.getEndTime().toHours());
 			

@@ -15,7 +15,7 @@ public class Time {
 		return toHoursFunc(this.mHour, this.mMinute);
 	}
 	
-	/* static method to transfer minute to hour */
+	/* factory method to transfer minute to hour */
 	public static double toHoursFunc(int hour, int minute){
 		return hour + (double)minute/60;
 	}
